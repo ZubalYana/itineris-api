@@ -8,6 +8,10 @@ export const tripService = {
     return trip;
   },
 
+  async getById(tripId: string){
+    return await tripRepository.findById(tripId);
+  },
+
   async update(data: UpdateTripDTO, tripId: string){
     const trip = await tripRepository.findById(tripId);
     if (!trip) {

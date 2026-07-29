@@ -15,6 +15,16 @@ export async function CreateTrip(input: unknown, userId: string){
     }
 }
 
+export async function GetTripById(tripId: string){
+    try{
+        const result = await tripService.getById(tripId);
+        return { data: result }
+    }catch(err){
+        if(err instanceof Error) return {error: err.message};
+        return { error: 'Error getting your trip'}
+    }
+}
+
 export async function UpdateTrip(input: unknown, tripId: string){
     const parsed = UpdateTripSchema.safeParse(input);
     if(!parsed.success) return { error: z.treeifyError(parsed.error) }

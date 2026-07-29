@@ -79,6 +79,7 @@ model Invite {
   status        InviteStatus @default(PENDING)
   invitedBy     User        @relation("InvitesSent", fields: [invitedById], references: [id])
   invitedById   String
+  expiresAt     DateTime
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 

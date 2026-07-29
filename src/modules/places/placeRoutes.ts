@@ -1,4 +1,4 @@
-import { CreatePlace, UpdatePlace, DeletePlace, GetAllByTrip, GetById } from "./placeController.js";
+import { CreatePlace, UpdatePlace, DeletePlace, GetAllByTrip } from "./placeController.js";
 import {Router} from 'express';
 import authMiddleware from "../../middleware/authMiddleware.js";
 import { requireTripRole } from "../../middleware/roleMiddleware.js";

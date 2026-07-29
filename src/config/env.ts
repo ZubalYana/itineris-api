@@ -14,6 +14,9 @@ function requireEnv(key: string): string {
 
 export const env = {
     PORT: process.env.PORT ? Number(process.env.PORT) : 5000,
+    POSTGRES_PASSWORD: requireEnv('POSTGRES_PASSWORD'),
     DATABASE_URL: requireEnv('DATABASE_URL'),
-    JWT_SECRET: requireEnv('JWT_SECRET')
+    JWT_SECRET: requireEnv('JWT_SECRET'),
+    RESEND_API_KEY: requireEnv('RESEND_API_KEY'),
+    FRONTEND_URL: requireEnv('FRONTEND_URL'),
 }

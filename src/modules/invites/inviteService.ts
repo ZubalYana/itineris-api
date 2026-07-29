@@ -1,0 +1,56 @@
+import crypto from "crypto";
+import { inviteRepository } from "./inviteRepository.js";
+import type { CreateInviteDTO } from "./inviteSchema.js";
+import { Prisma } from "@prisma/client";
+import getResend from "../../config/resend.js";
+import { env } from "../../config/env.js";
+
+export const inviteService = {
+  async create(
+    data: CreateInviteDTO,
+    tripId: string,
+    userId: string,
+    inviterEmail: string
+  ) {
+    if (data.invitedEmail === inviterEmail) {
+      throw new Error("You can't invite yourself");
+    }
+    const resend = getResend();
+    const token = crypto.randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    try {
+      const invite = await inviteRepository.create(
+        data,
+        tripId,
+        userId,
+        token,
+        expiresAt
+      );
+
+      const link = `${env.FRONTEND_URL}/pending-invite?token=${token}`;
+
+      await resend.emails.send({
+        from: "Itineris <invite@librex.pictureboooks.homes>",
+        to: data.invitedEmail,
+        subject: "You've been invited to collaborate on a trip!",
+        html: `
+          <p>You've been invited to collaborate on a trip in Itineris.</p>
+          <p><a href="${link}">Click here to accept the invite</a></p>
+          <p>This link expires in 24 hours.</p>
+        `,
+      });
+
+      return invite;
+    } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === "P2002"
+      ) {
+        throw new Error(
+          "An active invite already exists for this email on this trip"
+        );
+      }
+      throw err;
+    }
+  },
+};

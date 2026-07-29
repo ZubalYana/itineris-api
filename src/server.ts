@@ -1,11 +1,6 @@
-import express from 'express';
-import cors from 'cors';
+import app from './app.js';
 import { env } from './config/env.js';
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-app.listen(env.PORT || 5000, ()=>{
-    console.log(`Itineris api working on PORT: ${process.env.PORT}`)
-})
+app.listen(env.PORT, () => {
+  console.log(`Itineris API running on port ${env.PORT}`);
+});

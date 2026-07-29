@@ -26,5 +26,9 @@ export const tripService = {
       throw new Error('Trip not found');
     }
     return tripRepository.delete(tripId);
+  },
+
+  async getMyTrips(userId: string){
+   return tripRepository.findAllForUser(userId);
   }
 }

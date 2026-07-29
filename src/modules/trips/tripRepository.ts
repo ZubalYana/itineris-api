@@ -28,5 +28,9 @@ export const tripRepository = {
     async findById(tripId: string){
         const trip = await prisma.trip.findUnique({where: {id: tripId}});
         return trip;
+    },
+
+    async findAllForUser(userId: string){
+        return await prisma.trip.findMany({where: {members: {some: {userId}}}, include: { members: true }})
     }
 }

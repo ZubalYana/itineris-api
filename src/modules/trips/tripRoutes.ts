@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { CreateTrip, UpdateTrip, DeleteTrip, GetTripById } from "./tripController.js";
+import { CreateTrip, UpdateTrip, DeleteTrip, GetTripById, GetMyTrips } from "./tripController.js";
 import authMiddleware from "../../middleware/authMiddleware.js";
 import { requireTripRole } from "../../middleware/roleMiddleware.js";
 const router = Router();
@@ -36,5 +36,13 @@ router.delete('/:tripId', authMiddleware, requireTripRole(['OWNER']), async (req
     if('error' in result){return res.status(400).json(result)}
     res.status(200).json(result);
 })
+
+router.get('/', authMiddleware, async (req, res) => {
+  const userId = req.user!.id;
+  const result = await GetMyTrips(userId);
+
+  if ('error' in result) { res.status(400).json(result); return; }
+  res.status(200).json(result);
+});
 
 export default router;

@@ -47,3 +47,13 @@ export async function DeleteTrip(tripId: string){
         return { error: 'Error deleting trip'}
     }
 }
+
+export async function GetMyTrips(userId: string){
+  try{
+    const trips = await tripService.getMyTrips(userId);
+    return { data: trips };
+  }catch(err){
+    if(err instanceof Error) return { error: err.message };
+    return { error: 'Error fetching trips' };
+  }
+}

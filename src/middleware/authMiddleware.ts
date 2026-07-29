@@ -18,4 +18,6 @@ export default function authMiddleware(req: Request, res: Response, next: NextFu
     }catch(err){
         return res.status(500).json({message: 'Internal server error'});
     }
+
+    next();
 }

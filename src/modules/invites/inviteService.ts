@@ -53,4 +53,33 @@ export const inviteService = {
       throw err;
     }
   },
+
+  async decline(token: string){
+    if(!token){
+        throw new Error('No invite token provided');
+    }
+    return await inviteRepository.decline(token);
+  },
+
+async accept(token: string, userId: string, userEmail: string){
+  if(!token){
+    throw new Error('No invite token provided');
+  }
+
+  const invite = await inviteRepository.findInvite(token);
+  if(!invite){
+    throw new Error('Invite not found');
+  }
+  if(invite.status !== 'PENDING'){
+    throw new Error('Invite is no longer valid');
+  }
+  if(invite.expiresAt < new Date()){
+    throw new Error('Invite has expired');
+  }
+  if (invite.invitedEmail !== userEmail) {
+  throw new Error('This invite was not sent to your account');
+   }
+
+  return inviteRepository.accept(invite.tripId, userId, invite.id);
+}
 };

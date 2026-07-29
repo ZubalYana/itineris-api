@@ -15,3 +15,23 @@ export async function CreateInvite(input: unknown, userId: string, tripId: strin
         return { error: 'Error creating the invite'}
     }
 }
+
+export async function DeclineInvite(token: string){
+    try{
+        const result = await inviteService.decline(token);
+        return { data: result };
+    }catch(err){
+        if(err instanceof Error) return { error: err.message }
+        return { error: 'Error declining the invite.'}
+    }
+}
+
+export async function AcceptInvite(token: string, userId: string, userEmail: string){
+    try{
+        const result = await inviteService.accept(token, userId, userEmail);
+        return { data: result };
+    }catch(err){
+        if(err instanceof Error) return { error: err.message }
+        return { error: 'Error accepting the invite'}
+    }
+}

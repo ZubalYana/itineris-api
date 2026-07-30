@@ -43,29 +43,35 @@ export const authService = {
 
   async verifyEmail(userEmail: string) {
     const resend = getResend();
-    const token = crypto.randomBytes(32).toString("hex");
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(rawToken)
+      .digest("hex");
     const tokenExpiry = new Date(Date.now() + 30 * 60 * 1000);
 
-    const link = `${env.FRONTEND_URL}/verify-email?token=${token}`;
+    const link = `${env.FRONTEND_URL}/verify-email?token=${rawToken}`;
 
     await resend.emails.send({
       from: "Itineris <verify@librex.pictureboooks.homes>",
       to: userEmail,
       subject: "Confirm your email",
       html: `
-          <p>We received a request to confirm this email.</p>
-          <p><a href="${link}">Click here to confirm your email</a></p>
-          <p>This link expires in 30 minutes. If that was not you - ignore the link.</p>
-        `,
+      <p>We received a request to confirm this email.</p>
+      <p><a href="${link}">Click here to confirm your email</a></p>
+      <p>This link expires in 30 minutes. If that was not you - ignore the link.</p>
+    `,
     });
 
-    return authRepository.verifyEmail(token, tokenExpiry, userEmail);
+    return authRepository.verifyEmail(hashedToken, tokenExpiry, userEmail);
   },
 
   async confirmedEmail(userEmail: string, token: string) {
     const user = await authRepository.findByEmail(userEmail);
     if (!user) throw new Error("User with such email not found");
-    if (user.emailVerifyToken !== token) throw new Error("Invalid token");
+
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    if (user.emailVerifyToken !== hashedToken) throw new Error("Invalid token");
     if (user.emailVerifyExpiry! < new Date(Date.now()))
       throw new Error("Expired link");
 

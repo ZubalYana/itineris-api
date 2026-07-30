@@ -1,4 +1,4 @@
-import { Register, Login, VerifyEmail } from "./authController.js";
+import { Register, Login, VerifyEmail, ConfirmEmail } from "./authController.js";
 import { Router } from "express";
 import authMiddleware from "../../middleware/authMiddleware.js";
 const router = Router();
@@ -30,6 +30,21 @@ router.post('/verify-email', authMiddleware, async (req,res)=>{
         res.status(400).json(result);
         return;
     }
+    res.status(200).json(result)
+})
+
+router.post('/confirm-email/:token', authMiddleware, async (req,res)=>{
+    const userEmail = req.user?.email;
+    const token = req.params.token as string;
+    if(!userEmail) return res.status(400).json({message: 'Email not found'});
+    if(!token) return res.status(400).json({message: 'Token not found'});
+
+    const result = await ConfirmEmail(userEmail, token)
+    if('error' in result){
+        res.status(400).json(result)
+        return
+    }
+
     res.status(200).json(result)
 })
 

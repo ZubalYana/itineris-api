@@ -60,5 +60,14 @@ export const authService = {
       });
 
         return authRepository.verifyEmail(token, tokenExpiry, userEmail);
+    },
+
+    async confirmedEmail(userEmail: string, token: string){
+        const user = await authRepository.findByEmail(userEmail);
+        if(!user) return { error: 'User with such email not found'}
+        if(user.emailVerifyToken !== token) return { error: 'Invalid token'}
+        if(user.emailVerifyExpiry! < new Date(Date.now())) return { error: 'Expired link'}
+
+        return await authRepository.confirmedEmail(userEmail);
     }
 }

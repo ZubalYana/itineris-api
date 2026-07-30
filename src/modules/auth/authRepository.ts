@@ -17,5 +17,12 @@ export const authRepository = {
             where: {email: userEmail},
             data: { emailVerifyToken: token, emailVerifyExpiry: tokenExpiry }
         })
+    },
+
+    async confirmedEmail(userEmail: string){
+        return await prisma.user.update({
+            where: { email: userEmail },
+            data: { emailVerifyToken: null, emailVerifyExpiry: null, emailVerified: new Date(Date.now())}
+        })
     }
 }

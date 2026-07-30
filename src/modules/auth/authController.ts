@@ -36,3 +36,12 @@ export async function VerifyEmail(userEmail: string){
         return { error: 'Failed to verify email.'}
     }
 }
+
+export async function ConfirmEmail(userEmail: string, token: string){
+    try{
+        return authService.confirmedEmail(userEmail, token);
+    }catch(err){
+        if(err instanceof Error) return { error: err.message }
+        return { error: 'Failed to verify email.'}
+    }
+}

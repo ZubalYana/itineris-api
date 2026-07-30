@@ -28,7 +28,11 @@ export const tripService = {
     return tripRepository.delete(tripId);
   },
 
-  async getMyTrips(userId: string){
-   return tripRepository.findAllForUser(userId);
-  }
+  async getMyTrips(userId: string, search?: string, sortBy?: string, order?: 'asc' | 'desc'){
+  const allowedSortFields = ['title', 'startDate', 'endDate', 'createdAt'];
+  const safeSortBy = allowedSortFields.includes(sortBy ?? '') ? sortBy! : 'createdAt';
+  const safeOrder = order === 'asc' ? 'asc' : 'desc';
+
+  return tripRepository.findAllForUser(userId, search, safeSortBy, safeOrder);
+}
 }

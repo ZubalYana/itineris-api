@@ -48,9 +48,9 @@ export async function DeleteTrip(tripId: string){
     }
 }
 
-export async function GetMyTrips(userId: string){
+export async function GetMyTrips(userId: string, search?: string, sortBy?: string, order?: 'asc' | 'desc'){
   try{
-    const trips = await tripService.getMyTrips(userId);
+    const trips = await tripService.getMyTrips(userId, search, sortBy, order);
     return { data: trips };
   }catch(err){
     if(err instanceof Error) return { error: err.message };

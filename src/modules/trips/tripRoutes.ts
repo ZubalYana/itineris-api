@@ -39,10 +39,15 @@ router.delete('/:tripId', authMiddleware, requireTripRole(['OWNER']), async (req
 
 router.get('/', authMiddleware, async (req, res) => {
   const userId = req.user!.id;
-  const result = await GetMyTrips(userId);
+  const { search, sortBy, order } = req.query as {
+    search?: string;
+    sortBy?: string;
+    order?: 'asc' | 'desc';
+  };
+
+  const result = await GetMyTrips(userId, search, sortBy, order);
 
   if ('error' in result) { res.status(400).json(result); return; }
   res.status(200).json(result);
 });
-
 export default router;

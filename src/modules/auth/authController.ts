@@ -47,3 +47,18 @@ export async function ConfirmEmail(token: string){
     return { error: 'Failed to verify email.' }
   }
 }
+
+export async function ForgotPassword(userEmail: string){
+  await authService.forgotPassword(userEmail);
+  return { data: { message: 'If that email exists, a reset link has been sent.' } };
+}
+
+export async function ResetPassword(token: string, newPassword: string){
+  try{
+    await authService.resetPassword(token, newPassword);
+    return { data: { message: 'Password reset successful' } };
+  }catch(err){
+    if(err instanceof Error) return { error: err.message }
+    return { error: 'Internal server error' }
+  }
+}

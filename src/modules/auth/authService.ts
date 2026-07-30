@@ -76,4 +76,39 @@ export const authService = {
 
     return await authRepository.confirmedEmail(user.email);
   },
+  
+  async forgotPassword(userEmail: string){
+  const user = await authRepository.findByEmail(userEmail);
+  if (!user) return; 
+
+  const resend = getResend();
+  const rawToken = crypto.randomBytes(32).toString('hex');
+  const hashedToken = crypto.createHash("sha256").update(rawToken).digest('hex');
+  const tokenExpiry = new Date(Date.now() + 30*60*1000);
+  const link = `${env.FRONTEND_URL}/reset-password?token=${rawToken}`;
+
+  await resend.emails.send({
+      from: "Itineris <forgotPassword@librex.pictureboooks.homes>",
+      to: userEmail,
+      subject: "Reset password",
+      html: `
+      <p>We received a request to reset your password.</p>
+      <p><a href="${link}">Click here to set a new password</a></p>
+      <p>This link expires in 30 minutes. If that was not you - ignore the link.</p>
+    `,
+    });
+
+  return await authRepository.forgotPassword(hashedToken, tokenExpiry, userEmail);
+},
+
+  async resetPassword(token: string, newRawPassword: string){
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+  const user = await authRepository.findByResetToken(hashedToken);
+
+  if(!user) throw new Error('Invalid or expired token');
+  if(user.passwordResetExpiry! < new Date(Date.now())) throw new Error('Invalid or expired token');
+
+  const newPassword = await bcrypt.hash(newRawPassword, 10);
+  return await authRepository.resetPassword(user.email, newPassword);
+}
 };

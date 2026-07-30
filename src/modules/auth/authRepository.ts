@@ -16,6 +16,10 @@ export const authRepository = {
     return prisma.user.findUnique({ where: { emailVerifyToken: hashedToken } });
   },
 
+  async findByResetToken(resetToken: string){
+    return await prisma.user.findUnique({where: {passwordResetToken: resetToken}})
+  },
+
   async verifyEmail(token: string, tokenExpiry: Date, userEmail: string) {
     return await prisma.user.update({
       where: { email: userEmail },
@@ -33,4 +37,22 @@ export const authRepository = {
       },
     });
   },
+
+  async forgotPassword(token: string, tokenExpiry: Date, userEmail: string){
+    return await prisma.user.update({
+        where: { email: userEmail},
+        data: {passwordResetToken: token, passwordResetExpiry: tokenExpiry}
+    })
+  },
+
+  async resetPassword(userEmail: string, newPassword: string){
+    return await prisma.user.update({
+        where: { email: userEmail },
+        data: {
+            passwordResetExpiry: null,
+            passwordResetToken: null,
+            password: newPassword
+        }
+    })
+  }
 };

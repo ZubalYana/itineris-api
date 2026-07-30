@@ -46,7 +46,7 @@ model User {
   tripMemberships TripMember[]
   emailVerifyToken       String?  @unique
   emailVerifyExpiry      DateTime?
-  passwordResetToken     String?
+  passwordResetToken     String?  @unique
   passwordResetExpiry    DateTime?
 }
 

@@ -66,15 +66,14 @@ export const authService = {
     return authRepository.verifyEmail(hashedToken, tokenExpiry, userEmail);
   },
 
-  async confirmedEmail(userEmail: string, token: string) {
-    const user = await authRepository.findByEmail(userEmail);
-    if (!user) throw new Error("User with such email not found");
-
+  async confirmedEmail(token: string) {
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
-    if (user.emailVerifyToken !== hashedToken) throw new Error("Invalid token");
+    const user = await authRepository.findByVerifyToken(hashedToken);
+
+    if (!user) throw new Error("Invalid token");
     if (user.emailVerifyExpiry! < new Date(Date.now()))
       throw new Error("Expired link");
 
-    return await authRepository.confirmedEmail(userEmail);
+    return await authRepository.confirmedEmail(user.email);
   },
 };

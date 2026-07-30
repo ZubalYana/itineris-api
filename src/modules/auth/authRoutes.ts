@@ -33,19 +33,16 @@ router.post('/verify-email', authMiddleware, async (req,res)=>{
     res.status(200).json(result)
 })
 
-router.post('/confirm-email/:token', authMiddleware, async (req,res)=>{
-    const userEmail = req.user?.email;
-    const token = req.params.token as string;
-    if(!userEmail) return res.status(400).json({message: 'Email not found'});
-    if(!token) return res.status(400).json({message: 'Token not found'});
+router.post('/confirm-email/:token', async (req, res) => {
+  const token = req.params.token as string;
+  if (!token) return res.status(400).json({ message: 'Token not found' });
 
-    const result = await ConfirmEmail(userEmail, token)
-    if('error' in result){
-        res.status(400).json(result)
-        return
-    }
-
-    res.status(200).json(result)
-})
+  const result = await ConfirmEmail(token);
+  if ('error' in result) {
+    res.status(400).json(result);
+    return;
+  }
+  res.status(200).json(result);
+});
 
 export default router;

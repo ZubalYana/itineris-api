@@ -5,7 +5,7 @@ import { requireTripRole } from "../../middleware/roleMiddleware.js";
 
 const router = Router();
 
-router.post('/:tripId', authMiddleware, async (req,res)=>{
+router.post('/:tripId', authMiddleware,  requireTripRole(["OWNER"]), async (req,res)=>{
     const tripId = req.params.tripId as string;
     const userId = req.user?.id as string;
     const userEmail = req.user?.email as string;
@@ -30,7 +30,7 @@ router.delete('/', authMiddleware, async (req,res)=>{
     res.status(200).json(result)
 })
 
-router.post('/', authMiddleware, requireTripRole(["OWNER"]), async (req, res)=>{
+router.post('/', authMiddleware, async (req, res)=>{
     const userId = req.user?.id as string;
     const userEmail = req.user?.email as string;
     const {token} = req.body;

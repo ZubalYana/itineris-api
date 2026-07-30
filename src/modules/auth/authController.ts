@@ -30,7 +30,8 @@ export async function Login(input: unknown){
 
 export async function VerifyEmail(userEmail: string){
     try{
-        return authService.verifyEmail(userEmail);
+        const user = await authService.verifyEmail(userEmail);
+        return { data: {id: user.id, email: user.email, name: user.name}}
     }catch(err){
         if(err instanceof Error) return { error: err.message }
         return { error: 'Failed to verify email.'}
@@ -39,7 +40,8 @@ export async function VerifyEmail(userEmail: string){
 
 export async function ConfirmEmail(userEmail: string, token: string){
     try{
-        return authService.confirmedEmail(userEmail, token);
+        const user = await authService.confirmedEmail(userEmail, token);
+        return { data: {id: user.id, email: user.email, name: user.name}}
     }catch(err){
         if(err instanceof Error) return { error: err.message }
         return { error: 'Failed to verify email.'}

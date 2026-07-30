@@ -27,3 +27,12 @@ export async function Login(input: unknown){
         return {error: 'Login failure'}
     }
 }
+
+export async function VerifyEmail(userEmail: string){
+    try{
+        return authService.verifyEmail(userEmail);
+    }catch(err){
+        if(err instanceof Error) return { error: err.message }
+        return { error: 'Failed to verify email.'}
+    }
+}

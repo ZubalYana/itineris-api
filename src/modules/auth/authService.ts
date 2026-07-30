@@ -4,6 +4,8 @@ import prisma from "../../config/db.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { env } from "../../config/env.js";
+import crypto from 'crypto';
+import getResend from "../../config/resend.js";
 
 export const authService = {
     async register(data:RegistrationDTO){
@@ -37,5 +39,26 @@ export const authService = {
         )
 
         return token;
+    },
+
+    async verifyEmail(userEmail: string){
+        const resend = getResend();
+        const token = crypto.randomBytes(32).toString("hex");
+        const tokenExpiry = new Date(Date.now() + 30*60*1000);
+
+        const link = `${env.FRONTEND_URL}/verify-email?token=${token}`
+
+        await resend.emails.send({
+        from: "Itineris <verify@librex.pictureboooks.homes>",
+        to: userEmail,
+        subject: "Confirm your email",
+        html: `
+          <p>We received a request to confirm this email.</p>
+          <p><a href="${link}">Click here to confirm your email</a></p>
+          <p>This link expires in 30 minutes. If that was not you - ignore the link.</p>
+        `,
+      });
+
+        return authRepository.verifyEmail(token, tokenExpiry, userEmail);
     }
 }

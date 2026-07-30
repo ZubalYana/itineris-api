@@ -10,5 +10,12 @@ export const authRepository = {
     async findByEmail(email: string){
         const user = await prisma.user.findUnique({where: {email}});
         return user;
+    },
+
+    async verifyEmail(token: string, tokenExpiry: Date, userEmail: string){
+        return await prisma.user.update({
+            where: {email: userEmail},
+            data: { emailVerifyToken: token, emailVerifyExpiry: tokenExpiry }
+        })
     }
 }

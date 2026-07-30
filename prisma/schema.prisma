@@ -44,6 +44,10 @@ model User {
   updatedAt       DateTime     @updatedAt
   sentInvites     Invite[]     @relation("InvitesSent")
   tripMemberships TripMember[]
+  emailVerifyToken       String?
+  emailVerifyExpiry      DateTime?
+  passwordResetToken     String?
+  passwordResetExpiry    DateTime?
 }
 
 model Trip {

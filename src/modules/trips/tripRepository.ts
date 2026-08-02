@@ -48,6 +48,7 @@ export const tripRepository = {
       orderBy: {
         [sortBy ?? "createdAt"]: order ?? "desc",
       },
+      include: { members: true, places: true }
     });
   },
 };

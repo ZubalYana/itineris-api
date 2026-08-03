@@ -8,8 +8,14 @@ export const tripService = {
     return trip;
   },
 
-  async getById(tripId: string) {
-    return await tripRepository.findById(tripId);
+  async getById(tripId: string, userId: string) {
+    const trip = await tripRepository.findById(tripId);
+    if(!trip) throw new Error('Trip not found')
+
+    const membership = trip.members.find((m)=>m.userId === userId)
+    if(!membership) throw new Error('Not your trip')
+
+    return { ...trip, role: membership.role }
   },
 
   async update(data: UpdateTripDTO, tripId: string) {

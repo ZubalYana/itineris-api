@@ -14,7 +14,8 @@ router.post('/', authMiddleware, async (req, res)=>{
 
 router.get('/:tripId', authMiddleware, requireTripRole(["OWNER", "COLLABORATOR"]), async (req,res)=>{
     const tripId = req.params.tripId as string;
-    const result = await GetTripById(tripId);
+    const userId = req.user?.id as string;
+    const result = await GetTripById(tripId, userId);
 
     if('error' in result){return res.status(400).json(result)}
     res.status(200).json(result);

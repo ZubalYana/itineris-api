@@ -15,9 +15,9 @@ export async function CreateTrip(input: unknown, userId: string){
     }
 }
 
-export async function GetTripById(tripId: string){
+export async function GetTripById(tripId: string, userId: string){
     try{
-        const result = await tripService.getById(tripId);
+        const result = await tripService.getById(tripId, userId);
         return { data: result }
     }catch(err){
         if(err instanceof Error) return {error: err.message};

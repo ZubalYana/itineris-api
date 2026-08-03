@@ -28,6 +28,16 @@ export async function Login(input: unknown) {
   }
 }
 
+export async function FindByEmail(email: string){
+  try{
+    const user = await authService.findByEmail(email)
+    return user;
+  }catch(err){
+    if(err instanceof Error) return { error: err.message }
+    return { error: 'Failed to fetch user'}
+  }
+}
+
 export async function VerifyEmail(userEmail: string) {
   try {
     const user = await authService.verifyEmail(userEmail);

@@ -1,4 +1,4 @@
-import { Register, Login, VerifyEmail, ConfirmEmail, ForgotPassword, ResetPassword } from "./authController.js";
+import { Register, Login, VerifyEmail, ConfirmEmail, ForgotPassword, ResetPassword, FindByEmail } from "./authController.js";
 import { Router } from "express";
 import authMiddleware from "../../middleware/authMiddleware.js";
 const router = Router();
@@ -19,6 +19,21 @@ router.post('/login', async (req,res)=>{
         return
     }
     res.status(200).json(result);
+})
+
+router.get('/user', authMiddleware, async (req,res)=>{
+    const email = req.user?.email;
+    if(!email){
+        res.status(401).json({message: 'Unauthorized'})
+        return
+    }
+    const result = await FindByEmail(email);
+
+    if('error' in result){
+        res.status(400).json(result)
+        return
+    }
+    res.status(200).json(result)
 })
 
 router.post('/verify-email', authMiddleware, async (req,res)=>{

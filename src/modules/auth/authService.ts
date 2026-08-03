@@ -47,6 +47,19 @@ export const authService = {
     };
     return { token, user: safeUser };  },
 
+  async findByEmail(email: string){
+    const user = await authRepository.findByEmail(email);
+    if(!user) throw new Error('User not found')
+    const safeUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      emailVerified: user.emailVerified,
+    };
+    return { user: safeUser }; 
+  },
+
   async verifyEmail(userEmail: string) {
     const resend = getResend();
     const rawToken = crypto.randomBytes(32).toString("hex");

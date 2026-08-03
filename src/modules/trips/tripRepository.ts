@@ -28,7 +28,23 @@ export const tripRepository = {
   },
 
   async findById(tripId: string) {
-    const trip = await prisma.trip.findUnique({ where: { id: tripId }, include: {places: true, members: {include: {user: true}}} });
+    const trip = await prisma.trip.findUnique({
+      where: { id: tripId },
+      include: {
+        places: true,
+        members: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                email: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
     return trip;
   },
 
@@ -48,7 +64,7 @@ export const tripRepository = {
       orderBy: {
         [sortBy ?? "createdAt"]: order ?? "desc",
       },
-      include: { members: true, places: true }
+      include: { members: true, places: true },
     });
   },
 };

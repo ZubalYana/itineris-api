@@ -28,7 +28,7 @@ export const tripRepository = {
   },
 
   async findById(tripId: string) {
-    const trip = await prisma.trip.findUnique({ where: { id: tripId }, include: {places: true, members: true} });
+    const trip = await prisma.trip.findUnique({ where: { id: tripId }, include: {places: true, members: {include: {user: true}}} });
     return trip;
   },
 

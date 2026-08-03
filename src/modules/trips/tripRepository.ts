@@ -39,6 +39,7 @@ export const tripRepository = {
                 id: true,
                 email: true,
                 name: true,
+                avatar: true
               },
             },
           },

@@ -74,3 +74,12 @@ export async function ResetPassword(token: string, newPassword: string) {
     return { error: "Internal server error" };
   }
 }
+
+export async function UploadAvatar(avatar: Express.Multer.File, userId: string){
+  try{
+    return await authService.uploadAvatar(avatar, userId);
+  }catch (err) {
+    if (err instanceof Error) return { error: err.message };
+    return { error: "Internal server error" };
+  }
+}

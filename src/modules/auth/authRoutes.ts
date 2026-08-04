@@ -1,6 +1,7 @@
-import { Register, Login, VerifyEmail, ConfirmEmail, ForgotPassword, ResetPassword, FindByEmail } from "./authController.js";
+import { Register, Login, VerifyEmail, ConfirmEmail, ForgotPassword, ResetPassword, FindByEmail, UploadAvatar } from "./authController.js";
 import { Router } from "express";
 import authMiddleware from "../../middleware/authMiddleware.js";
+import { upload } from "../../config/multer.config.js";
 const router = Router();
 
 router.post('/register', async (req, res)=>{
@@ -80,4 +81,12 @@ router.post('/reset-password/:token', async (req,res)=>{
   res.status(200).json(result);
 })
 
+router.patch('/avatar', authMiddleware, upload.single('avatar'), async (req,res)=>{
+    const userId = req.user?.id;
+    if(!req.user) return res.status(401).json({error: 'Unauthorized'})
+    const avatar = req.file;
+    if(!avatar) return res.status(400).json({error: 'File not uploaded'})
+    const uploaded = await UploadAvatar(avatar, userId!)
+    return res.status(200).json({data: uploaded})
+})
 export default router;

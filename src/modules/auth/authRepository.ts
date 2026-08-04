@@ -54,5 +54,9 @@ export const authRepository = {
             password: newPassword
         }
     })
+  },
+
+  async uploadAvatar(userId: string, avatar: string){
+    return await prisma.user.update({where: { id: userId}, data: {avatar}})
   }
 };

@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { env } from "../../config/env.js";
 import crypto from "crypto";
 import getResend from "../../config/resend.js";
+import { streamUpload } from "../../utils/cloudinaryUpload.js";
 
 export const authService = {
   async register(data: RegistrationDTO) {
@@ -139,4 +140,12 @@ export const authService = {
     const newPassword = await bcrypt.hash(newRawPassword, 10);
     return await authRepository.resetPassword(user.email, newPassword);
   },
+
+  async uploadAvatar(avatar: Express.Multer.File, userId: string){
+    if(!avatar) throw new Error('File not found');
+    if(!userId) throw new Error('Invalid user id');
+
+    const avatarURL = await streamUpload(avatar.buffer)
+    return await authRepository.uploadAvatar(userId, avatarURL)
+  }
 };

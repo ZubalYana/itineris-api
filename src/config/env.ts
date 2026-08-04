@@ -19,4 +19,7 @@ export const env = {
     JWT_SECRET: requireEnv('JWT_SECRET'),
     RESEND_API_KEY: requireEnv('RESEND_API_KEY'),
     FRONTEND_URL: requireEnv('FRONTEND_URL'),
+    CLOUDINARY_CLOUD_NAME: requireEnv('CLOUDINARY_CLOUD_NAME'),
+    CLOUDINARY_API_KEY: requireEnv('CLOUDINARY_API_KEY'),
+    CLOUDINARY_API_SECRET: requireEnv('CLOUDINARY_API_SECRET'),
 }

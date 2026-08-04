@@ -54,6 +54,7 @@ model Trip {
   id          String       @id @default(uuid())
   title       String
   description String?
+  banner      String?
   startDate   DateTime?
   endDate     DateTime?
   members     TripMember[]

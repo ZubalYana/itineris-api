@@ -57,3 +57,12 @@ export async function GetMyTrips(userId: string, search?: string, sortBy?: strin
     return { error: 'Error fetching trips' };
   }
 }
+
+export async function UploadBanner(banner: Express.Multer.File, tripId: string){
+    try{
+        return await tripService.uploadBanner(banner, tripId)
+    }catch(err){
+    if(err instanceof Error) return { error: err.message };
+    return { error: 'Error fetching trips' };
+  }
+}

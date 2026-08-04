@@ -68,4 +68,8 @@ export const tripRepository = {
       include: { members: true, places: true },
     });
   },
+
+  async uploadBanner(banner: string, tripId: string){
+    return await prisma.trip.update({where: { id: tripId}, data: { banner }})
+  }
 };

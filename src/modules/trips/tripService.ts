@@ -1,5 +1,6 @@
 import { tripRepository } from "./tripRepository.js";
 import type { CreateTripDTO, UpdateTripDTO } from "./tripsSchema.js";
+import { streamUpload } from "../../utils/cloudinaryUpload.js";
 
 export const tripService = {
   async create(data: CreateTripDTO, userId: string) {
@@ -58,4 +59,11 @@ export const tripService = {
       return { ...trip, role: membership?.role ?? null };
     });
   },
+
+  async uploadBanner(banner: Express.Multer.File, tripId: string){
+    if(!banner) throw new Error('Banner not found')
+    if(!tripId) throw new Error('Trip not found')
+    const bannerURL = await streamUpload(banner.buffer)
+    return await tripRepository.uploadBanner(bannerURL, tripId);
+  }
 };

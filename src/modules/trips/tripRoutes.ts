@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { CreateTrip, UpdateTrip, DeleteTrip, GetTripById, GetMyTrips } from "./tripController.js";
+import { CreateTrip, UpdateTrip, DeleteTrip, GetTripById, GetMyTrips, UploadBanner } from "./tripController.js";
 import authMiddleware from "../../middleware/authMiddleware.js";
 import { requireTripRole } from "../../middleware/roleMiddleware.js";
+import { upload } from "../../config/multer.config.js";
 const router = Router();
 
 router.post('/', authMiddleware, async (req, res)=>{
@@ -51,4 +52,13 @@ router.get('/', authMiddleware, async (req, res) => {
   if ('error' in result) { res.status(400).json(result); return; }
   res.status(200).json(result);
 });
+
+router.patch('/:tripId/banner', authMiddleware, requireTripRole(['OWNER']), upload.single('banner'), async (req,res)=>{
+    const tripId = req.params.tripId as string;
+    if(!tripId) return res.status(400).json({error: 'Trip not found'})
+    const banner = req.file
+if(!banner) return res.status(400).json({error: 'Banner not uploaded'})
+    const result = await UploadBanner(banner!, tripId)
+    return res.status(200).json(result)
+} )
 export default router;

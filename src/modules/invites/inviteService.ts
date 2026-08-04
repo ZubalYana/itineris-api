@@ -61,6 +61,18 @@ export const inviteService = {
     return await inviteRepository.decline(token);
   },
 
+async cancel(id: string, requestingUserId: string) {
+  if (!id) throw new Error('Id not provided');
+
+  const invite = await inviteRepository.findById(id);
+  if (!invite) throw new Error('Invite not found');
+  if (invite.invitedById !== requestingUserId) {
+    throw new Error('You do not have permission to cancel this invite');
+  }
+
+  return await inviteRepository.cancel(id);
+},
+
 async accept(token: string, userId: string, userEmail: string){
   if(!token){
     throw new Error('No invite token provided');

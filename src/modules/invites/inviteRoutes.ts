@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { CreateInvite, DeclineInvite, AcceptInvite } from "./inviteController.js";
+import { CreateInvite, DeclineInvite, AcceptInvite, CancelInvite } from "./inviteController.js";
 import authMiddleware from "../../middleware/authMiddleware.js";
 import { requireTripRole } from "../../middleware/roleMiddleware.js";
 
@@ -25,6 +25,20 @@ router.delete('/', authMiddleware, async (req,res)=>{
 
     if('error' in result){
         return res.status(400).json(result);
+    }
+
+    res.status(200).json(result)
+})
+
+router.delete('/cancel', authMiddleware, async (req,res)=>{
+    const {id} = req.body;
+    if(!req.user){
+        return res.status(401).json({error: 'Unauthorized'})
+    }
+    const result = await CancelInvite(id, req.user.id);
+
+    if('error' in result){
+        return res.status(400).json(result)
     }
 
     res.status(200).json(result)

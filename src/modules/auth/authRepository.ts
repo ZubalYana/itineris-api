@@ -8,7 +8,7 @@ export const authRepository = {
   },
 
   async findByEmail(email: string) {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { email }, include: {sentInvites: true} });
     return user;
   },
 

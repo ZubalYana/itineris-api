@@ -56,6 +56,7 @@ export const authService = {
       email: user.email,
       avatar: user.avatar,
       emailVerified: user.emailVerified,
+      sentInvites: user.sentInvites,
     };
     return { user: safeUser }; 
   },

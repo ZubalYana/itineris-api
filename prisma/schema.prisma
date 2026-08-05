@@ -15,6 +15,7 @@ enum TripRole {
   OWNER
   COLLABORATOR
 }
+
 enum InviteStatus {
   PENDING
   ACCEPTED
@@ -22,46 +23,48 @@ enum InviteStatus {
 }
 
 model TripMember {
-  id       String   @id @default(uuid())
-  trip     Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  tripId   String
-  user     User     @relation(fields: [userId], references: [id])
-  userId   String
-  role     TripRole
+  id        String   @id @default(uuid())
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  tripId    String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  role      TripRole
   createdAt DateTime @default(now())
 
   @@unique([tripId, userId])
 }
 
 model User {
-  id              String       @id @default(uuid())
-  name            String
-  email           String       @unique
-  password        String
-  emailVerified   DateTime?
-  avatar          String?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-  sentInvites     Invite[]     @relation("InvitesSent")
-  tripMemberships TripMember[]
-  emailVerifyToken       String?  @unique
-  emailVerifyExpiry      DateTime?
-  passwordResetToken     String?  @unique
-  passwordResetExpiry    DateTime?
+  id                  String        @id @default(uuid())
+  name                String
+  email               String        @unique
+  password            String
+  emailVerified       DateTime?
+  avatar              String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  sentInvites         Invite[]      @relation("InvitesSent")
+  tripMemberships     TripMember[]
+  emailVerifyToken    String?       @unique
+  emailVerifyExpiry   DateTime?
+  passwordResetToken  String?       @unique
+  passwordResetExpiry DateTime?
+  tripPayments        TripPayment[]
 }
 
 model Trip {
-  id          String       @id @default(uuid())
-  title       String
-  description String?
-  banner      String?
-  startDate   DateTime?
-  endDate     DateTime?
-  members     TripMember[]
-  places      Place[]
-  invites     Invite[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id           String        @id @default(uuid())
+  title        String
+  description  String?
+  banner       String?
+  startDate    DateTime?
+  endDate      DateTime?
+  members      TripMember[]
+  places       Place[]
+  invites      Invite[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  tripPayments TripPayment[]
 }
 
 model Place {
@@ -76,18 +79,39 @@ model Place {
 }
 
 model Invite {
-  id            String      @id @default(uuid())
-  trip          Trip        @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  tripId        String
-  invitedEmail  String
-  token         String      @unique
-  status        InviteStatus @default(PENDING)
-  invitedBy     User        @relation("InvitesSent", fields: [invitedById], references: [id])
-  invitedById   String
-  expiresAt     DateTime
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id           String       @id @default(uuid())
+  trip         Trip         @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  tripId       String
+  invitedEmail String
+  token        String       @unique
+  status       InviteStatus @default(PENDING)
+  invitedBy    User         @relation("InvitesSent", fields: [invitedById], references: [id])
+  invitedById  String
+  expiresAt    DateTime
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
 
   @@unique([tripId, invitedEmail, status])
 }
 
+model TripPayment {
+  id                    String        @id @default(cuid())
+  tripId                String
+  userId                String
+  amountCents           Int
+  currency              String        @default("usd")
+  stripePaymentIntentId String        @unique
+  status                PaymentStatus @default(PENDING)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  trip Trip @relation(fields: [tripId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELED
+}
